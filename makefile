@@ -5,6 +5,9 @@
 ###############################################################################
 VERBOSE = 0
 
+USE_FREERTOS = 1
+FREERTOS_DIR = FreeRTOS
+
 # application name
 TARGET     = blinky
 
@@ -91,6 +94,25 @@ LDFLAGS    = -Wl,--gc-sections -Wl,-Map=$(TARGET).map $(LIBS) -T$(LDFILE)
 
 OBJECTS    = $(addprefix obj/,$(SRCS:.c=.o))
 DEPS       = $(addprefix dep/,$(SRCS:.c=.d))
+
+###############################################################################
+# FreeRTOS Definitions
+###############################################################################
+ifeq ($(USE_FREERTOS), 1)
+	INCLUDES     += -I$(FREERTOS_DIR)/include
+	SRCS         += cmsis_os.c
+	SRCS         += croutine.c
+	SRCS         += event_groups.c
+	SRCS         += heap_2.c
+	SRCS         += list.c
+	SRCS         += port.c
+	SRCS         += queue.c
+	SRCS         += stream_buffer.c
+	SRCS         += tasks.c
+	SRCS         += timers.c
+	VPATH        += $(FREERTOS_DIR)
+	DEFINES      += -DUSE_RTOS_SYSTICK
+endif
 ################################################################################
 # OpenOCD
 ################################################################################

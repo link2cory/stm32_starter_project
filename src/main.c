@@ -8,19 +8,24 @@
 #define LED_PIN               GPIO_PIN_5
 #define LED_GPIO_PORT         GPIOA
 #define LED_GPIO_CLK_ENABLE() __HAL_RCC_GPIOA_CLK_ENABLE()
-#define LED_FLASH_PERIOD      1000
+#define LED_FLASH_PERIOD      100
+
+TaskHandle_t blinkTaskHandle;
 
 void LED_Init();
+void BlinkTask(void const *argument);
 
 int main(void) {
   HAL_Init();
   LED_Init();
 
-  while (1)
-  {
-    HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN);
-    HAL_Delay(1000);
-  }
+  osThreadDef(blinkTask, BlinkTask, osPriorityNormal, 0, 128);
+  blinkTaskHandle = osThreadCreate(osThread(blinkTask), NULL);
+
+  /* Start scheduler */
+  osKernelStart();
+
+  while (1);
 }
 
 void LED_Init() {
@@ -31,4 +36,11 @@ void LED_Init() {
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
   HAL_GPIO_Init(LED_GPIO_PORT, &GPIO_InitStruct);
+}
+
+void BlinkTask(void const *argument) {
+  while (1) {
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    osDelay(LED_FLASH_PERIOD);
+  }
 }
