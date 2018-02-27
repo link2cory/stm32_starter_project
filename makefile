@@ -63,6 +63,9 @@ INCLUDES      += -I$(BSP_DIR)
 INCLUDES      += -I$(CMSIS_DIR)/Include
 INCLUDES      += -I$(DEV_DIR)/Include
 INCLUDES      += -I$(HAL_DIR)/Inc
+INCLUDES      += -Isrc/stm32/include
+
+VPATH         += ./src/stm32
 
 # Libraries
 LIBS        = -L$(CMSIS_DIR)/Lib
