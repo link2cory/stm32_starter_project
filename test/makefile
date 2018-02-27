@@ -1,0 +1,104 @@
+###############################################################################
+# TDD Makefile used with CPPUTest
+#
+# Author: Cory Perkins
+###############################################################################
+#Set this to @ to keep the makefile quiet
+SILENCE = @
+APPLICATION_NAME = blinky
+
+#---- Outputs ----#
+COMPONENT_NAME = $(APPLICATION_NAME)
+
+PROJECT_HOME_DIR = ./..
+
+# where the cpputest library is located
+CPPUTEST_VERSION = 3.8
+CPPUTEST_HOME = $(PROJECT_HOME_DIR)/vendor/cpputest-$(CPPUTEST_VERSION)
+
+SRC_DIR=$(PROJECT_HOME_DIR)/src/modules
+TEST_DIR=$(PROJECT_HOME_DIR)/test
+
+# --- SRC_DIRS ---
+# Use SRC_DIRS to specifiy production directories
+# code files.
+# These files are compiled and put into a the
+# ProductionCode library and links with the test runner
+SRC_DIRS=$(SRC_DIR)
+
+# specify where the test code is located
+TEST_SRC_DIRS = $(TEST_DIR)
+
+# what to call the test binary
+TEST_TARGET=$(APPLICATION_NAME)_test
+
+# specify where the source code and includes are located
+INCLUDE_DIRS = \
+$(SRC_DIR)\
+$(SRC_DIR)/include\
+$(CPPUTEST_HOME)/include\
+
+CPPUTEST_USE_GCOV=Y
+
+# --- CPPUTEST_OBJS_DIR ---
+# if you have to use "../" to get to your source path
+# the makefile will put the .o and .d files in surprising
+# places.
+# To make up for each level of "../", add place holder
+# sub directories in CPPUTEST_OBJS_DIR
+# each "../".  It is kind of a kludge, but it causes the
+# .o and .d files to be put under objs.
+# e.g. if you have "../../src", set to "test-objs/1/2"
+# This is set no "../" in the source path.
+CPPUTEST_OBJS_DIR = test-obj
+
+CPPUTEST_LIB_DIR = test-lib
+
+# You may have to tweak these compiler flags
+#    CPPUTEST_WARNINGFLAGS - apply to C and C++
+#    CPPUTEST_CFLAGS - apply to C files only
+#    CPPUTEST_CXXFLAGS - apply to C++ files on;y
+#    CPPUTEST_CPPFLAGS - apply to C and C++ Pre-Processor
+#
+# If you get an error like this
+#     TestPlugin.h:93:59: error: 'override' keyword is incompatible
+#        with C++98 [-Werror,-Wc++98-compat] ...
+# The compiler is basically telling you how to fix the
+# build problem.  You would add this flag setting
+#     CPPUTEST_CXXFLAGS += -Wno-c++14-compat
+ifeq ($(shell $(CC) -v 2>&1 | grep -c "clang"), 1)
+CPPUTEST_WARNINGFLAGS += -Wno-unknown-warning-option
+CPPUTEST_WARNINGFLAGS += -Wno-covered-switch-default
+CPPUTEST_WARNINGFLAGS += -Wno-reserved-id-macro
+CPPUTEST_WARNINGFLAGS += -Wno-keyword-macro
+CPPUTEST_WARNINGFLAGS += -Wno-documentation
+CPPUTEST_WARNINGFLAGS += -Wno-missing-noreturn
+endif
+
+CPPUTEST_WARNINGFLAGS += -Wall
+CPPUTEST_WARNINGFLAGS += -Werror
+CPPUTEST_WARNINGFLAGS += -Wfatal-errors
+CPPUTEST_WARNINGFLAGS += -Wswitch-default
+CPPUTEST_WARNINGFLAGS += -Wno-format-nonliteral
+CPPUTEST_WARNINGFLAGS += -Wno-sign-conversion
+CPPUTEST_WARNINGFLAGS += -Wno-pedantic
+CPPUTEST_WARNINGFLAGS += -Wno-shadow
+CPPUTEST_WARNINGFLAGS += -Wno-missing-field-initializers
+CPPUTEST_WARNINGFLAGS += -Wno-unused-parameter
+CPPUTEST_CFLAGS += -Wall
+CPPUTEST_CFLAGS += -pedantic
+CPPUTEST_CFLAGS += -Wno-missing-prototypes
+CPPUTEST_CFLAGS += -Wno-strict-prototypes
+CPPUTEST_CXXFLAGS += -Wno-c++14-compat
+CPPUTEST_CXXFLAGS += --std=c++11
+CPPUTEST_CXXFLAGS += -Wno-c++98-compat-pedantic
+CPPUTEST_CXXFLAGS += -Wno-c++98-compat
+
+CPPUTEST_EXE_FLAGS = -c
+
+# --- LD_LIBRARIES -- Additional needed libraries can be added here.
+# commented out example specifies math library
+#LD_LIBRARIES += -lm
+
+# Look at $(CPPUTEST_HOME)/build/MakefileWorker.mk for more controls
+include $(CPPUTEST_HOME)/build/MakefileWorker.mk

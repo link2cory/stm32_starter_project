@@ -9,12 +9,14 @@ VERBOSE = 0
 TARGET     = blinky
 
 # STM32 Cube HAL Directory
-CUBE_DIR   = cube
+CUBE_DIR   = vendor/STM32Cube_FW_F4_V1.19.0
 
 # Include search paths
 INCLUDES       = -Isrc
 INCLUDES      += -Isrc/include
+INCLUDES      += -Isrc/modules/include
 VPATH          = ./src
+VPATH         += ./src/modules
 
 # Sources
 SRCS           = main.c
@@ -98,6 +100,10 @@ OCD        = openocd
 OCD_DIR    = /usr/share/openocd/scripts
 OCDFLAGS   = -f board/st_nucleo_f4.cfg
 ################################################################################
+# CppUTest
+################################################################################
+TEST_DIR = test
+################################################################################
 # Misc
 ################################################################################
 ifeq ($(VERBOSE), 0)
@@ -106,7 +112,7 @@ endif
 ###############################################################################
 # Rules
 ###############################################################################
-.PHONY: all program clean
+.PHONY: all test program clean
 
 all: $(TARGET).bin
 
@@ -131,6 +137,9 @@ $(TARGET).elf: $(OBJECTS)
 	@echo "[SIZE]    $(TARGET).elf"
 	$(SIZE) $(TARGET).elf
 
+test:
+	make -C $(TEST_DIR)
+
 program: all
 	$(OCD) -s $(OCD_DIR) $(OCDFLAGS) -c "program $(TARGET).elf verify reset exit"
 
@@ -141,3 +150,4 @@ clean:
 	@echo "[RM]      $(TARGET).lst"; rm -f $(TARGET).lst
 	@echo "[RMDIR]   obj"          ; rm -fr obj/
 	@echo "[RMDIR]   dep"          ; rm -fr dep/
+	make -C $(TEST_DIR) clean
