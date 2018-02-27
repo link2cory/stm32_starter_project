@@ -22,7 +22,7 @@ VPATH          = ./src
 VPATH         += ./src/modules
 
 # Sources
-SRCS           = main.c
+SRCS           = main.c my_module.c
 
 # MCU Board
 BOARD_UC      = STM32F4xx-Nucleo

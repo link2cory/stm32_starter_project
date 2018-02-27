@@ -3,7 +3,11 @@
 * Filename:    main.c
 * Author:      Cory Perkins
 *******************************************************************************/
-#include "main.h"
+#include "stm32f4xx.h"
+#include "stm32f4xx_nucleo.h"
+#include "stm32f4xx_hal.h"
+
+#include "my_module.h"
 
 #define LED_PIN               GPIO_PIN_5
 #define LED_GPIO_PORT         GPIOA
