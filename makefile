@@ -6,7 +6,7 @@
 VERBOSE = 0
 
 USE_FREERTOS = 1
-FREERTOS_DIR = FreeRTOS
+FREERTOS_DIR = vendor/FreeRTOS
 
 # application name
 TARGET     = blinky
