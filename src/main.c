@@ -3,7 +3,15 @@
 * Filename:    main.c
 * Author:      Cory Perkins
 *******************************************************************************/
+<<<<<<< Updated upstream
 #include "main.h"
+=======
+#include "stm32f4xx.h"
+#include "stm32f4xx_nucleo.h"
+#include "stm32f4xx_hal.h"
+#include "cmsis_os.h"
+#include "my_module.h"
+>>>>>>> Stashed changes
 
 #define LED_PIN               GPIO_PIN_5
 #define LED_GPIO_PORT         GPIOA
