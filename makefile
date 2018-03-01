@@ -22,7 +22,8 @@ VPATH          = ./src
 VPATH         += ./src/modules
 
 # Sources
-SRCS           = main.c my_module.c
+SRCS           = main.c
+CXXSRCS         = my_module.cpp
 
 # MCU Board
 BOARD_UC      = STM32F4xx-Nucleo
@@ -78,6 +79,7 @@ LIBS        = -L$(CMSIS_DIR)/Lib
 ###############################################################################
 PREFIX  = arm-none-eabi
 CC      = $(PREFIX)-gcc
+CXX     = $(PREFIX)-g++
 AR      = $(PREFIX)-ar
 OBJCOPY = $(PREFIX)-objcopy
 OBJDUMP = $(PREFIX)-objdump
@@ -94,11 +96,19 @@ CFLAGS    += -ffunction-sections -fdata-sections
 CFLAGS    += $(INCLUDES)
 CFLAGS    += $(DEFINES)
 
+CXXFLAGS     = -Wall -g -Os
+CXXFLAGS    += -mlittle-endian -mcpu=cortex-m4 -march=armv7e-m -mthumb
+CXXFLAGS    += -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CXXFLAGS    += -ffunction-sections -fdata-sections
+CXXFLAGS    += $(INCLUDES)
+CXXFLAGS    += $(DEFINES)
+
 # Linker Flags
 LDFLAGS    = -Wl,--gc-sections -Wl,-Map=$(TARGET).map $(LIBS) -T$(LDFILE)
 
-OBJECTS    = $(addprefix obj/,$(SRCS:.c=.o))
-DEPS       = $(addprefix dep/,$(SRCS:.c=.d))
+COBJECTS    = $(addprefix obj/,$(SRCS:.c=.o))
+CXXOBJECTS  = $(addprefix obj/,$(CXXSRCS:.cpp=.o))
+DEPS        = $(addprefix dep/,$(SRCS:.c=.d))
 
 ###############################################################################
 # FreeRTOS Definitions
@@ -150,13 +160,17 @@ obj/%.o : %.c | dirs
 	@echo "[CC]      $(notdir $<)"
 	$Q$(CC) $(CFLAGS) -c -o $@ $< -MMD -MF dep/$(*F).d
 
+obj/%.o : %.cpp | dirs
+	@echo "[CXX]      $(notdir $<)"
+	$Q$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF dep/$(*F).d
+
 $(TARGET).bin: $(TARGET).elf
 	@echo "[OBJCOPY] $(TARGET).bin"
 	$Q$(OBJCOPY) -O binary $< $@
 
-$(TARGET).elf: $(OBJECTS)
+$(TARGET).elf: $(COBJECTS)
 	@echo "[LD]      $(TARGET).elf"
-	$Q$(CC) $(CFLAGS) $(LDFLAGS) startup_$(MCU_LC).s $^ -o $@
+	$Q$(CXX) $(CXXFLAGS) $(LDFLAGS) startup_$(MCU_LC).s $^ -o $@
 	@echo "[OBJDUMP] $(TARGET).lst"
 	$Q$(OBJDUMP) -St $(TARGET).elf > $(TARGET).lst
 	@echo "[SIZE]    $(TARGET).elf"
