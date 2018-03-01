@@ -6,7 +6,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo.h"
 #include "stm32f4xx_hal.h"
-
+#include "cmsis_os.h"
 #include "my_module.h"
 
 #define LED_PIN               GPIO_PIN_5
