@@ -23,7 +23,7 @@ VPATH         += ./src/modules
 
 # Sources
 SRCS           = main.c
-CXXSRCS         = my_module.cpp
+CXXSRCS        = my_module.cpp
 
 # MCU Board
 BOARD_UC      = STM32F4xx-Nucleo
@@ -168,7 +168,7 @@ $(TARGET).bin: $(TARGET).elf
 	@echo "[OBJCOPY] $(TARGET).bin"
 	$Q$(OBJCOPY) -O binary $< $@
 
-$(TARGET).elf: $(COBJECTS)
+$(TARGET).elf: $(COBJECTS) $(CXXOBJECTS)
 	@echo "[LD]      $(TARGET).elf"
 	$Q$(CXX) $(CXXFLAGS) $(LDFLAGS) startup_$(MCU_LC).s $^ -o $@
 	@echo "[OBJDUMP] $(TARGET).lst"
