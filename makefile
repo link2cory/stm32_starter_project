@@ -15,15 +15,23 @@ TARGET     = blinky
 CUBE_DIR   = vendor/STM32Cube_FW_F4_V1.19.0
 
 # Include search paths
-INCLUDES       = -Isrc
-INCLUDES      += -Isrc/include
-INCLUDES      += -Isrc/modules/include
-VPATH          = ./src
-VPATH         += ./src/modules
+INCLUDES        = -Isrc
+INCLUDES       += -Isrc/HAL/include
+INCLUDES       += -Isrc/rtos/include
+
+VPATH           = ./src
+VPATH          += ./src/HAL
+VPATH          += ./src/rtos
 
 # Sources
 SRCS           = main.c
-CXXSRCS        = my_module.cpp
+# SRCS          += my_c_module.c
+# CXXSRCS        = my_cpp_module.cpp
+
+# HAL drivers
+# currently these need to be added manually here and enabled in your hal_conf
+# in src/HAL/include/
+# SRCS          += stm32f4xx_hal_i2c.c
 
 # MCU Board
 BOARD_UC      = STM32F4xx-Nucleo
@@ -61,15 +69,13 @@ SRCS          += stm32f4xx_hal_rcc_ex.c
 SRCS          += stm32f4xx_hal_cortex.c
 SRCS          += stm32f4xx_hal_gpio.c
 SRCS          += stm32f4xx_hal_pwr_ex.c
+
 SRCS          += $(BOARD_LC).c
 
 INCLUDES      += -I$(BSP_DIR)
 INCLUDES      += -I$(CMSIS_DIR)/Include
 INCLUDES      += -I$(DEV_DIR)/Include
 INCLUDES      += -I$(HAL_DIR)/Inc
-INCLUDES      += -Isrc/stm32/include
-
-VPATH         += ./src/stm32
 
 # Libraries
 LIBS        = -L$(CMSIS_DIR)/Lib
